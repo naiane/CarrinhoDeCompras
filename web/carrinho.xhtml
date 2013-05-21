@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/template/template.xhtml">
+  <ui:define name="body">
+    <h2>#{msg['carrinho-de-compras']}</h2>    
+    <h:form id="formCarrinhoDeCompras">
+      <p:messages autoUpdate="true" />
+      <p:dataTable id="listaItens" value="#{carrinhoDeComprasMB.pedidoCarrinho.itensOrdenadosEmLista}"
+        var="item" styleClass="lista-conteudo" emptyMessage="#{msg['carrinho-vazio']}">
+        
+        <p:column style="width: 60%" headerText="#{msg['produto']}">
+          <h:outputText value="#{item.produto.titulo}" />
+        </p:column>
+        <p:column style="width: 15%" headerText="#{msg['quantidade']}">
+          <p:inputText value="#{item.quantidade}" id="quantidade" size="3" maxlength="2" label="#{msg['quantidade']}">
+            <f:validateLongRange minimum="1" maximum="10" />
+            <p:ajax update="listaItens" listener="#{carrinhoDeComprasMB.recalcularTotal(item)}" />
+          </p:inputText>
+          <f:facet name="footer">  
+            <h:outputLabel value="#{msg['valor-total']}"/>  
+          </f:facet> 
+        </p:column>
+        <p:column headerText="#{msg['valor-total']}" style="width: 15%; text-align: right;">
+          <h:outputText value="#{item.precoTotal}">
+            <f:convertNumber currencyCode="BRL" type="currency" />
+          </h:outputText>
+          <f:facet name="footer">
+            <h:outputText value="#{carrinhoDeComprasMB.pedidoCarrinho.valorTotal}">
+              <f:convertNumber currencyCode="BRL" type="currency" />
+            </h:outputText>
+            </f:facet>          
+        </p:column>
+        <p:column headerText="#{msg['remover']}">
+          <p:commandButton icon="ui-icon-close" oncomplete="dialogConfirmaRemocaoProduto.show()" process="@this">
+            <f:setPropertyActionListener value="#{item.produto}" target="#{carrinhoDeComprasMB.produtoRemover}" />
+          </p:commandButton>
+        </p:column>  
+      </p:dataTable>
+      <h:link outcome="index" styleClass="link" value="#{msg['continuar-comprando']}" />
+        
+      <p:panel id="panelClienteCadastrado" header="#{msg['ja-sou-cliente']}" styleClass="panel-conteudo"
+        toggleable="true" rendered="#{carrinhoDeComprasMB.temItens()}">
+        <h:panelGrid columns="2">
+          <h:outputLabel value="#{msg['email']}" for="txtCadastradoEmail" />
+          <p:inputText value="#{carrinhoDeComprasMB.cliente.email}" id="txtCadastradoEmail" size="25" maxlength="40" 
+            required="true" label="#{msg['email']}"/>
+          <h:outputLabel value="#{msg['senha']}" for="txtCadastradoSenha" />
+          <p:password value="#{carrinhoDeComprasMB.cliente.senha}" id="txtCadastradoSenha" size="8" maxlength="8" 
+            required="true" label="#{msg['senha']}"/>
+        </h:panelGrid>
+        <p:commandButton action="#{carrinhoDeComprasMB.fecharPedidoUsuarioExistente}"
+          value="#{msg['finalizar-compra']}" process="panelClienteCadastrado" 
+          update="panelClienteCadastrado"/>          
+      </p:panel>
+      
+      <p:panel id="panelNovoCliente" header="#{msg['sou-novo-cliente']}" styleClass="panel-conteudo"
+        collapsed="true" toggleable="true" rendered="#{carrinhoDeComprasMB.temItens()}">
+        <h:panelGrid columns="2">
+          <h:outputLabel value="#{msg['nome']}" for="txtNovoNome" />
+          <p:inputText value="#{carrinhoDeComprasMB.cliente.nome}" id="txtNovoNome" size="30" maxlength="40" 
+            required="true" label="#{msg['nome']}"/>
+          <h:outputLabel value="#{msg['email']}" for="txtNovoEmail" />
+          <p:inputText value="#{carrinhoDeComprasMB.cliente.email}" id="txtNovoEmail" size="25" maxlength="40" 
+            required="true" label="#{msg['email']}" />
+          <h:outputLabel value="#{msg['senha']}" for="txtNovoSenha" />
+          <p:password value="#{carrinhoDeComprasMB.cliente.senha}" id="txtNovoSenha" size="8" maxlength="8" 
+            required="true" label="#{msg['senha']}">
+             <f:validateLength minimum="6" maximum="8" />
+          </p:password>        
+        </h:panelGrid>
+        <p:commandButton action="#{carrinhoDeComprasMB.fecharPedidoNovoUsuario}"
+          value="#{msg['cadastrar-e-finalizar-compra']}" process="panelNovoCliente" 
+          update="panelNovoCliente"/>        
+      </p:panel>
+      
+      <p:confirmDialog id="dialogRemoverProduto" widgetVar="dialogConfirmaRemocaoProduto" message="#{msg['confirmar-remocao-item']}">
+        <p:commandButton value="#{msg['sim']}" action="#{carrinhoDeComprasMB.removerItem}"
+          process="@this" update="@form" oncomplete="dialogConfirmaRemocaoProduto.hide()"/>
+        <p:commandButton value="#{msg['nao']}" immediate="true" process="@this" onclick="dialogConfirmaRemocaoProduto.hide()" />      
+      </p:confirmDialog>
+            
+    </h:form>    
+  </ui:define>
+</ui:composition>
+</html>

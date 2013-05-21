@@ -1,0 +1,57 @@
+/** Diminui o tamanho das fontes do primefaces **/
+.ui-widget,.ui-widget .ui-widget {
+  font-size: 90% !important;
+}
+#page {
+  width: 1000px; margin: 0 auto;
+}
+#header .titulo {
+  font-size: 3em;
+  color: #D49768;
+}
+#header .subtitulo {
+  font-size: 1.5em;
+  display: block;
+  color: #D49768;
+}
+#body {
+  margin-top: 20px;
+}
+.coluna {
+  padding: 5px;
+  vertical-align: top;
+}
+h2 {
+  color: #D49768;
+}
+.titulo-produto {
+  font-size: 14px;
+  font-weight: bold;
+}
+.resumo-produto {
+  margin-top: 8px;
+  display: block;
+}
+.links{
+  display: block;
+  margin-top: 10px;
+}
+.links a {
+  padding: 5px;
+}
+.link {
+  color: #D49768;
+  text-decoration: none;
+}
+.link:hover {
+  text-decoration: underline;
+}
+.lista-conteudo {
+  width: 98%; 
+  text-align: center; 
+  border: 0;
+}
+.panel-conteudo {
+  width: 98%; 
+  margin-top: 10px;
+}
